@@ -1,0 +1,27 @@
+import pymongo
+#import sys
+
+# establish a connection to teh database
+connection = pymongo.MongoClient("mongodb://localhost")
+
+# get a handle to the school database 
+db = connection.students
+grades = db.grades
+
+print "find Min of homework score for a student and remove it"
+	
+
+try:
+	cursor = grades.find({"type":"homework"}).sort([('student_id',pymongo.ASCENDING),('score',pymongo.ASCENDING)])
+except Exception as e:
+	print "Unexpected error : " , type(e) , e 
+	
+prev =-1
+curr = 0
+
+for doc in cursor:
+	curr = doc ['student_id']
+	if curr != prev:
+		prev=curr
+		print "Removing " , doc
+		grades.remove( { '_id' : doc[ '_id']})
